@@ -1,0 +1,8 @@
+mercury/**/*.mh
+mercury/**/*.c
+mercury/**/*.0
+mercury/**/*.c_date
+mercury/**/*.d
+mercury/**/*.o
+**/build/*
+
