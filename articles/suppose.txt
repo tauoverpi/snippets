@@ -1,0 +1,331 @@
+Suppose we had an interpreter for a logic language,
+  what could we do with it?
+
+                --- Birds & Bread ---
+
+        Any thing which likes bread is a bird.
+
+          likes_bread(X) :- bird(X).
+
+        But which birds?
+
+          bird(swan).
+          bird(cardinal).
+          bird(raven).
+
+        So do they all like bread?
+
+          ?- likes_bread(X).
+          X = swan.
+          X = cardinal.
+          X = raven.
+
+        Do only birds like bread? No! People do too.
+
+          people(anna).
+          people(bert).
+          people(cassy).
+
+        But not Bert.
+
+          likes_bread(X) :-
+            bird(X); people(X), not(X = bert).
+
+        So does cassy like bread?
+
+          ?- likes_bread(cassy).
+          yes.
+
+        Swans?
+
+          ?- likes_bread(swan).
+          yes.
+
+        And Bert?
+
+          ?- likes_bread(bert).
+          no.
+
+        Because Bert is special.
+
+  So we can state facts and run queries,
+    is that it?
+
+                --- Append & Lists ---
+
+        To append an empty list with a list is the
+        same as just that list.
+
+          append([], Ys, Ys).
+
+        To append a list of one element or more we
+        append the rest of the list then add the
+        the element we took of back to it.
+
+          append([X | Xs], Ys, Zs) :-
+            append(Xs, Ys, Z0),
+            Zs = [X | Z0].
+
+        Joining two lists.
+
+          ?- append([1,2], [3,4], X).
+
+        Results in a combined list of the contents.
+
+          X = [1,2,3,4].
+
+        where.
+
+                 input
+                   |      ,- input
+                   v      v
+          append([1,2], [3,4], X). <- output
+
+        If we have a result and one of the inputs.
+
+          ?- append(X, [3,4], [1,2,3,4]).
+
+        We can figure out the other input.
+
+          X = [1,2].
+
+        Where.
+
+              output
+                 |    ,- input
+                 v    v
+          append(X, [3,4], [1,2,3,4]). <- input
+
+        But if we only know the result.
+
+          ?- append(X, Y, [1,2,3,4]).
+
+        Then we get all possible inputs.
+
+          X = []
+          Y = [1,2,3,4]
+
+          X = [1]
+          Y = [2,3,4]
+
+          X = [1,2]
+          Y = [3,4]
+
+          X = [1,2,3]
+          Y = [4]
+
+          X = [1,2,3,4]
+          Y = []
+
+        Where.
+
+              output
+                 |  ,- output
+                 v  v
+          append(X, Y, [1,2,3,4]). <- input
+
+        Since each query tries to make both sides
+        equal. The following equations are the same
+        as the above.
+
+          [1,2] ++ [3,4] = X
+
+              X ++ [3,4] = [1,2,3,4]
+
+              X ++ Y     = [1,2,3,4]
+
+        But why didn't we try any like this.
+
+          ?- append(X, [2,3], Y).
+
+          ?- append([1,2], X, Y).
+
+          ?- append(X, Y, Z).
+
+        Because there's an infinite number of
+        solutions for them! Try it out on paper and
+        see for now as we'll nead features we haven't
+        covered yet to inspect them.
+
+So what's our universe?
+
+        The universe of items is defined like this.
+
+          :- type universe -->
+            swan; cardinal; raven;
+            anna; Bert; cassy;
+            birds; cats; dogs.
+
+        And the predicates we've used are have quite
+        interesting types.
+
+          :- pred likes_bread(universe).
+
+          :- mode likes_bread(in) is semidet.
+          :- mode likes_bread(out) is multi.
+
+          :- pred bird(universe).
+          :- mode bird(in) is semidet.
+          :- mode bird(out) is multi.
+
+          :- pred append(list(T), list(T), list(T)).
+          :- mode append(in, in, out) is det.
+          :- mode append(out, out, in) is nondet.
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+So how do we read this anyway?
+
+                --- Parsers & Compilers ---
+
+TBD: parser, compiler, literate programming plugin
+
+      This article format has a compiler!
+
+        ?- compile("tutorial.m").
+        X = {<meta>, <article in plain text>}.
+        X = {<meta>, <article in latex>}.
+        X = {<meta>, <article in texinfo>}.
+        X = {<meta>, <article in HTML>}.
+
+      Articles look a bit like this.
+
+        :- module title.
+        :- interface.
+        :- implementation.
+
+        %## So how do we read this anyway?
+        %###-- Parsers & Compilers
+        % This article has a compiler!
+
+        %|?- compile("tutorial.m").
+        %|X = {<meta>, <article in plain text>}.
+        %|X = {<meta>, <article in latex>}.
+        %|X = {<meta>, <article in texinfo>}.
+        %|X = {<meta>, <article in HTML>}.
+
+      But they don't need to be nested in comments
+      as text alone can use indent (`|` is only
+      to show indent level).
+
+        |So, how do we read this anyway?
+        |any|-- Parsers & Compilers
+        |||This article format has a compiler!
+        |||||?- compile("tutorial.m").
+        |||||X = {<meta>, <article in plain text>}.
+        |||||X = {<meta>, <article in latex>}.
+        |||||X = {<meta>, <article in texinfo>}.
+        |||||X = {<meta>, <article in HTML>}.
+
+      Syntax highlighting is derived from context,
+      the source (if it's obvious), and hints given
+      via figure notes.
+
+          likes_bread(X) :-
+            bird(X); people(X), not(X = bert).
+
+        fig 2.3: shows mercury code used to
+                 figure out which living things
+                 like bread.
+
+      But this is optional, if turned off you'll
+      need to be explicit.
+
+      There's also texinfo style commands.
+
+So what about when backtracking
+  isn't suitable?
+
+                --- Solvers ---
+
+TBD: finish this section
+
+Suppose I had an evaluator for a programming language
+  we'll call L.
+
+                --- Synthesis ---
+
+TBD: implement this
+
+      We can evaluate programs.
+
+          ?- eval(program, X).
+
+      Where the answer will be whatever the output of
+      the program is.
+
+          X = <output of running the program>
+
+      We can fill in an answer for it.
+
+          ?- eval(program, 5).
+
+      Then it acts like verification that the program
+      evaluates to the given value 5.
+
+          yes.
+
+      We can ommit the program.
+
+          ?- eval(X, 5).
+
+      The answer is now.
+
+          X = <every program in language L which results
+               in the number 5>.
+
+      What if we ommit the answer too?
+
+          ?- eval(X, Y).
+
+      Now it gets interesting.
+
+          X = <an enumeration of the space of all possible
+               programs in language L>.
+
+          Y = <an enumeration of the space of all possible
+               results from programs in language L>.
+
+      Reall? Yes, ALL. We can be more precise.
+
+          ?- eval(X, X).
+
+      Where the answer is.
+
+          X = <all possible quines in language L>.
+
+      So we can refine the possibly infinite space to
+      programs we're interested in! This opens opertunities
+      for constraint guided program synthesis.
+
+Synthesis? What?
+
+                --- Directed Synthesis ---
+
+TBD: implement this
+
+      Suppose we had an evaluator for language L where
+      we could also control the input.
+
+        :- pred rule(program, Input, Output).
+        :- mode rule(in, in, out) is semidet.
+        :- mode rule(out, out, in) is nondet.
+
+      Then we can explain the program we want.
+
+        program0(X) :-
+          rule(X, [[1], [2,3]], [1,2,3]) &
+          rule(X, [[2,3], [4]], [2,3,4]) &
+          rule(X, [[], []]    , [])      &
+          rule(X, [[], [1]]   , [1]).
+
+      Which will result in.
+
+        X = <all programs which satisfy the relation
+             between the given input and output>.
+
+      This is great! By taking control over input and
+      output we've gained the ability to provide program
+      specifications for procedures rather than just the
+      entire application itself.

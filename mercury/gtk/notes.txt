@@ -1,0 +1,4 @@
+https://developer.gnome.org/gtk3/stable/GtkGLArea.html
+https://developer.gimp.org/api/2.0/gtk/GtkBuilder.html
+https://www.bassi.io/articles/2015/02/17/using-opengl-with-gtk/
+https://developer.gnome.org/gtk3/stable/gtk3-General.html
